@@ -7,6 +7,8 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -27,6 +29,7 @@ public class DashboardDosen extends javax.swing.JFrame {
     private JPanel tablePanel;
     private JPanel navPanel;
     private JTable reservasiTable;
+    private JButton homeButton, ruanganButton, reservasiButton;
 
     /**
      * Creates new form DashboardDosen
@@ -52,11 +55,25 @@ public class DashboardDosen extends javax.swing.JFrame {
         mainPanel.setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));
 
         
-        // --- 2. Title "Good Morning..." ---
-        JLabel titleLabel = new JLabel("Good Morning...");
+        // --- 2. Header dengan Time dan Title ---
+        JPanel headerPanel = new JPanel(new BorderLayout());
+        headerPanel.setBackground(Color.WHITE);
+        
+        // Time label (kiri atas)
+        JLabel timeLabel = new JLabel("9:41");
+        timeLabel.setFont(new Font("Arial", Font.BOLD, 16));
+        
+        // Title label (tengah)
+        JLabel titleLabel = new JLabel("SIRUKAN");
         titleLabel.setFont(new Font("Arial", Font.BOLD, 24));
-        // Taruh di bagian ATAS (NORTH)
-        mainPanel.add(titleLabel, BorderLayout.NORTH);
+        titleLabel.setForeground(new Color(0, 51, 102)); // Warna biru tua
+        titleLabel.setHorizontalAlignment(JLabel.CENTER);
+        
+        headerPanel.add(timeLabel, BorderLayout.WEST);
+        headerPanel.add(titleLabel, BorderLayout.CENTER);
+        
+        // Taruh header di bagian ATAS (NORTH)
+        mainPanel.add(headerPanel, BorderLayout.NORTH);
 
         
         // --- 3. Panel Tengah (untuk Cards dan Table) ---
@@ -121,9 +138,22 @@ public class DashboardDosen extends javax.swing.JFrame {
         navPanel = new JPanel(new GridLayout(1, 3, 10, 10)); // 1 baris, 3 kolom
         navPanel.setBackground(Color.WHITE);
         
-        JButton homeButton = new JButton("Home");
-        JButton ruanganButton = new JButton("Ruangan");
-        JButton reservasiButton = new JButton("Reservasi");
+        homeButton = new JButton("Home");
+        ruanganButton = new JButton("Ruangan");
+        reservasiButton = new JButton("Reservasi");
+        
+        // Style tombol navigasi
+        styleNavButton(homeButton, true); // Home aktif
+        styleNavButton(ruanganButton, false);
+        styleNavButton(reservasiButton, false);
+        
+        // Add action listeners untuk navigasi
+        ruanganButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                openRuanganPage();
+            }
+        });
         
         navPanel.add(homeButton);
         navPanel.add(ruanganButton);
@@ -165,6 +195,27 @@ public class DashboardDosen extends javax.swing.JFrame {
         card.add(valueLabel);
 
         return card;
+    }
+    
+    private void styleNavButton(JButton button, boolean isActive) {
+        if (isActive) {
+            button.setBackground(new Color(0, 51, 102)); // Biru tua
+            button.setForeground(Color.WHITE);
+        } else {
+            button.setBackground(Color.LIGHT_GRAY);
+            button.setForeground(Color.BLACK);
+        }
+        button.setFont(new Font("Arial", Font.BOLD, 14));
+        button.setFocusPainted(false);
+        button.setBorderPainted(false);
+    }
+    
+    private void openRuanganPage() {
+        // Buka halaman Lihat Ruangan
+        LihatRuangan lihatRuangan = new LihatRuangan();
+        lihatRuangan.setLocationRelativeTo(null);
+        lihatRuangan.setVisible(true);
+        this.dispose(); // Tutup halaman dashboard
     }
 
     
