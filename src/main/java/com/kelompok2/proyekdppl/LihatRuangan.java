@@ -113,8 +113,8 @@ public class LihatRuangan extends javax.swing.JFrame {
         reservasiButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                javax.swing.JOptionPane.showMessageDialog(LihatRuangan.this, 
-                    "Fitur Reservasi akan segera tersedia!");
+                new ReservasiRuangan().setVisible(true);
+                dispose();
             }
         });
         

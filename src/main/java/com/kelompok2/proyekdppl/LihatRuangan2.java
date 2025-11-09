@@ -260,8 +260,9 @@ public class LihatRuangan2 extends javax.swing.JFrame {
         cariButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                javax.swing.JOptionPane.showMessageDialog(LihatRuangan2.this, 
-                    "Mencari ruangan dengan filter yang dipilih...");
+            // Navigasi ke LihatRuangan3 (hasil pencarian)
+            new LihatRuangan3().setVisible(true);
+            dispose();
             }
         });
         
@@ -310,8 +311,8 @@ public class LihatRuangan2 extends javax.swing.JFrame {
         reservasiButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                javax.swing.JOptionPane.showMessageDialog(LihatRuangan2.this, 
-                    "Fitur Reservasi akan segera tersedia!");
+            new ReservasiRuangan().setVisible(true);
+            dispose();
             }
         });
         

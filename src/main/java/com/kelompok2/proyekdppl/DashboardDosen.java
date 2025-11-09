@@ -123,6 +123,14 @@ public class DashboardDosen extends javax.swing.JFrame {
             }
         });
         
+        reservasiButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                new ReservasiRuangan().setVisible(true);
+                dispose();
+            }
+        });
+        
         navPanel.add(homeButton);
         navPanel.add(ruanganButton);
         navPanel.add(reservasiButton);
