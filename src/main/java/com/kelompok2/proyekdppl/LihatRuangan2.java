@@ -46,19 +46,15 @@ public class LihatRuangan2 extends javax.swing.JFrame {
 
     private void initComponentsCustom() {
         
-        // --- 1. Main Panel ---
         mainPanel = new JPanel(new BorderLayout(10, 10));
         mainPanel.setBackground(Color.WHITE);
         mainPanel.setBorder(BorderFactory.createEmptyBorder(15, 25, 15, 25));
 
-        
-        // --- 2. Header ---
         JPanel headerPanel = new JPanel();
         headerPanel.setLayout(new BoxLayout(headerPanel, BoxLayout.Y_AXIS));
         headerPanel.setBackground(Color.WHITE);
         headerPanel.setBorder(BorderFactory.createEmptyBorder(5, 0, 20, 0));
 
-        // SIRUKAN Title
         JLabel titleLabel = new JLabel("SIRUKAN");
         titleLabel.setFont(new Font("Arial", Font.BOLD, 24));
         titleLabel.setForeground(new Color(0, 51, 102));
@@ -67,7 +63,6 @@ public class LihatRuangan2 extends javax.swing.JFrame {
         headerPanel.add(titleLabel);
         headerPanel.add(Box.createVerticalStrut(10));
         
-        // Lihat Ruangan Subtitle
         JLabel subtitleLabel = new JLabel("Lihat Ruangan");
         subtitleLabel.setFont(new Font("Arial", Font.BOLD, 18));
         subtitleLabel.setForeground(Color.BLACK);
@@ -76,8 +71,6 @@ public class LihatRuangan2 extends javax.swing.JFrame {
         headerPanel.add(subtitleLabel);
         mainPanel.add(headerPanel, BorderLayout.NORTH);
 
-        
-        // --- 3. Form Panel ---
         JPanel formContainer = new JPanel();
         formContainer.setLayout(new BoxLayout(formContainer, BoxLayout.Y_AXIS));
         formContainer.setBackground(Color.WHITE);
@@ -87,7 +80,6 @@ public class LihatRuangan2 extends javax.swing.JFrame {
         formPanel.setBackground(Color.WHITE);
         formPanel.setMaximumSize(new Dimension(320, 500));
 
-        // --- Fakultas ---
         JLabel fakultasLabel = new JLabel("Fakultas");
         fakultasLabel.setFont(new Font("Arial", Font.BOLD, 14));
         fakultasLabel.setAlignmentX(JLabel.CENTER_ALIGNMENT);
@@ -102,7 +94,6 @@ public class LihatRuangan2 extends javax.swing.JFrame {
         formPanel.add(fakultasComboBox);
         formPanel.add(Box.createVerticalStrut(15));
 
-        // --- Tanggal ---
         JLabel tanggalLabel = new JLabel("Tanggal");
         tanggalLabel.setFont(new Font("Arial", Font.BOLD, 14));
         tanggalLabel.setAlignmentX(JLabel.CENTER_ALIGNMENT);
@@ -121,7 +112,6 @@ public class LihatRuangan2 extends javax.swing.JFrame {
         formPanel.add(tanggalField);
         formPanel.add(Box.createVerticalStrut(15));
 
-        // --- Kapasitas ---
         JLabel kapasitasLabel = new JLabel("Kapasitas");
         kapasitasLabel.setFont(new Font("Arial", Font.BOLD, 14));
         kapasitasLabel.setAlignmentX(JLabel.CENTER_ALIGNMENT);
@@ -140,7 +130,6 @@ public class LihatRuangan2 extends javax.swing.JFrame {
         formPanel.add(kapasitasField);
         formPanel.add(Box.createVerticalStrut(15));
 
-        // --- Jam & Hingga ---
         JPanel jamLabelPanel = new JPanel(new GridLayout(1, 2, 60, 0));
         jamLabelPanel.setBackground(Color.WHITE);
         jamLabelPanel.setMaximumSize(new Dimension(280, 20));
@@ -183,8 +172,6 @@ public class LihatRuangan2 extends javax.swing.JFrame {
         formPanel.add(jamPanel);
         formPanel.add(Box.createVerticalStrut(15));
 
-        // --- Kelas & Laboratorium ---
-        // Label untuk Kelas dan Laboratorium
         JPanel typeLabelPanel = new JPanel(new GridLayout(1, 2, 0, 0));
         typeLabelPanel.setBackground(Color.WHITE);
         typeLabelPanel.setMaximumSize(new Dimension(280, 20));
@@ -197,7 +184,6 @@ public class LihatRuangan2 extends javax.swing.JFrame {
         kelasTextLabel.setHorizontalAlignment(JLabel.CENTER);
         laboratoriumTextLabel.setHorizontalAlignment(JLabel.CENTER);
         
-        // Atur width label agar sejajar dengan button
         kelasTextLabel.setPreferredSize(new Dimension(130, 20));
         laboratoriumTextLabel.setPreferredSize(new Dimension(130, 20));
         
@@ -206,7 +192,6 @@ public class LihatRuangan2 extends javax.swing.JFrame {
         formPanel.add(typeLabelPanel);
         formPanel.add(Box.createVerticalStrut(5));
 
-        // Button Kelas dan Laboratorium
         JPanel typePanel = new JPanel();
         typePanel.setLayout(new BoxLayout(typePanel, BoxLayout.X_AXIS));
         typePanel.setBackground(Color.WHITE);
@@ -216,19 +201,16 @@ public class LihatRuangan2 extends javax.swing.JFrame {
         kelasButton = new JButton("Kelas");
         laboratoriumButton = new JButton("Laboratorium");
         
-        // Style buttons - SAMA PERSIS dengan label
         kelasButton.setFont(new Font("Arial", Font.PLAIN, 14));
         laboratoriumButton.setFont(new Font("Arial", Font.PLAIN, 14));
-        
-        // Set ukuran SAMA PERSIS dengan label
+       
         kelasButton.setPreferredSize(new Dimension(130, 35));
         laboratoriumButton.setPreferredSize(new Dimension(130, 35));
         kelasButton.setMinimumSize(new Dimension(130, 35));
         laboratoriumButton.setMinimumSize(new Dimension(130, 35));
         kelasButton.setMaximumSize(new Dimension(130, 35));
         laboratoriumButton.setMaximumSize(new Dimension(130, 35));
-        
-        // Warna default
+       
         kelasButton.setBackground(new Color(0, 51, 102));
         kelasButton.setForeground(Color.WHITE);
         laboratoriumButton.setBackground(Color.LIGHT_GRAY);
@@ -239,7 +221,6 @@ public class LihatRuangan2 extends javax.swing.JFrame {
         kelasButton.setBorderPainted(false);
         laboratoriumButton.setBorderPainted(false);
 
-        // Action listeners
         kelasButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -266,7 +247,6 @@ public class LihatRuangan2 extends javax.swing.JFrame {
         formPanel.add(typePanel);
         formPanel.add(Box.createVerticalStrut(25));
 
-        // --- Tombol Cari ---
         cariButton = new JButton("Cari");
         cariButton.setFont(new Font("Arial", Font.BOLD, 16));
         cariButton.setBackground(new Color(0, 51, 102));
@@ -286,16 +266,13 @@ public class LihatRuangan2 extends javax.swing.JFrame {
         });
         
         formPanel.add(cariButton);
-        
-        // Center the form panel
+       
         formContainer.add(Box.createVerticalGlue());
         formContainer.add(formPanel);
         formContainer.add(Box.createVerticalGlue());
         
         mainPanel.add(formContainer, BorderLayout.CENTER);
 
-        
-        // --- 4. Navigation ---
         navPanel = new JPanel(new GridLayout(1, 3, 10, 10));
         navPanel.setBackground(Color.WHITE);
         navPanel.setBorder(BorderFactory.createEmptyBorder(15, 0, 0, 0));
@@ -304,7 +281,6 @@ public class LihatRuangan2 extends javax.swing.JFrame {
         ruanganButton = new JButton("Ruangan");
         reservasiButton = new JButton("Reservasi");
         
-        // Style nav buttons
         homeButton.setBackground(Color.LIGHT_GRAY);
         homeButton.setForeground(Color.BLACK);
         ruanganButton.setBackground(new Color(0, 51, 102));
@@ -323,7 +299,6 @@ public class LihatRuangan2 extends javax.swing.JFrame {
         ruanganButton.setBorderPainted(false);
         reservasiButton.setBorderPainted(false);
 
-        // Nav actions
         homeButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {

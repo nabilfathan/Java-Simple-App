@@ -1,9 +1,18 @@
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ */
 package com.kelompok2.proyekdppl;
+
+/**
+ *
+ * @author user
+ */
+
 import javax.swing.JOptionPane;
 
-// Perhatikan, logger sudah dihapus dari sini
 public class LoginPage extends javax.swing.JFrame {
-    // ... (Semua deklarasi variabel komponen-mu tetap di sini) ...
+   
     private javax.swing.JButton jButton1;
     private javax.swing.JCheckBox jCheckBox1;
     private javax.swing.JLabel jLabel1;
@@ -15,17 +24,13 @@ public class LoginPage extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPasswordField jPasswordField1;
     private javax.swing.JTextField jTextField1;
-    // private static final java.util.logging.Logger logger = ... (HAPUS INI)
-
+   
     public LoginPage() {
         initComponents();
     }
     
     @SuppressWarnings("unchecked")
     private void initComponents() {
-        // ... (SEMUA KODE initComponents() KAMU DARI ATAS SAMPAI BAWAH TETAP SAMA) ...
-        // ... (Tidak perlu saya tulis ulang, biarkan saja seperti aslinya) ...
-        // ... (Mulai dari jPanel1 = new ... sampai pack();) ...
         
         jPanel1 = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
@@ -43,20 +48,20 @@ public class LoginPage extends javax.swing.JFrame {
         setSize(new java.awt.Dimension(400, 600));
 
         jPanel1.setBackground(new java.awt.Color(255, 255, 255));
-        jPanel1.setName("mainPanel"); // NOI18N
+        jPanel1.setName("mainPanel"); 
 
-        jLabel2.setFont(new java.awt.Font("Arial", 1, 24)); // NOI18N
+        jLabel2.setFont(new java.awt.Font("Arial", 1, 24)); 
         jLabel2.setText("SIRUKAN");
-        jLabel2.setName("tittleLabel"); // NOI18N
+        jLabel2.setName("tittleLabel"); 
 
-        jLabel1.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
+        jLabel1.setFont(new java.awt.Font("Arial", 0, 14)); 
         jLabel1.setText("sistem reservasi ruang kelas dan laboratorium");
-        jLabel1.setName("subtittleLabel1"); // NOI18N
+        jLabel1.setName("subtittleLabel1");
 
-        jLabel3.setFont(new java.awt.Font("Arial", 0, 12)); // NOI18N
+        jLabel3.setFont(new java.awt.Font("Arial", 0, 12)); 
         jLabel3.setText("NIM (Nomor Induk Mahasiswa)");
 
-        jTextField1.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
+        jTextField1.setFont(new java.awt.Font("Arial", 0, 14)); 
         jTextField1.setMaximumSize(new java.awt.Dimension(32767, 40));
         jTextField1.addActionListener(new java.awt.event.ActionListener() {
             @Override
@@ -65,13 +70,13 @@ public class LoginPage extends javax.swing.JFrame {
             }
         });
 
-        jLabel4.setFont(new java.awt.Font("Arial", 0, 12)); // NOI18N
+        jLabel4.setFont(new java.awt.Font("Arial", 0, 12)); 
         jLabel4.setText("Password");
 
-        jPasswordField1.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
+        jPasswordField1.setFont(new java.awt.Font("Arial", 0, 14)); 
         jPasswordField1.setMaximumSize(new java.awt.Dimension(32767, 40));
 
-        jCheckBox1.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
+        jCheckBox1.setFont(new java.awt.Font("Arial", 0, 14)); 
         jCheckBox1.setText("Ingat saya");
         jCheckBox1.addActionListener(new java.awt.event.ActionListener() {
             @Override
@@ -80,12 +85,12 @@ public class LoginPage extends javax.swing.JFrame {
             }
         });
 
-        jLabel5.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
+        jLabel5.setFont(new java.awt.Font("Arial", 0, 14));
         jLabel5.setForeground(new java.awt.Color(0, 51, 102));
         jLabel5.setText("Lupa password?");
 
         jButton1.setBackground(new java.awt.Color(0, 51, 102));
-        jButton1.setFont(new java.awt.Font("Arial", 1, 16)); // NOI18N
+        jButton1.setFont(new java.awt.Font("Arial", 1, 16)); 
         jButton1.setForeground(new java.awt.Color(255, 255, 255));
         jButton1.setText("Login");
         jButton1.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
@@ -96,7 +101,7 @@ public class LoginPage extends javax.swing.JFrame {
         }
     });
 
-        jLabel6.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
+        jLabel6.setFont(new java.awt.Font("Arial", 0, 14)); 
         jLabel6.setText("Butuh bantuan? Hubungi kami");
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
@@ -175,30 +180,25 @@ public class LoginPage extends javax.swing.JFrame {
         // TODO add your handling code here:
     }
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {                                         
-        // 1. Ambil input dari user
+        
         String nim = jTextField1.getText();
         String password = new String(jPasswordField1.getPassword());
 
-        // 2. Logika validasi (INI HANYA CONTOH, ganti dengan database-mu nanti)
         if (nim.equals("dosen") && password.equals("12345")) {
-            // Jika login berhasil:
-            
-            // 3. Buat dan tampilkan halaman dashboard
+       
+          
             DashboardDosen dashboard = new DashboardDosen();
-            dashboard.setLocationRelativeTo(null); // Bikin jendela di tengah
+            dashboard.setLocationRelativeTo(null); 
             dashboard.setVisible(true);
 
-            // 4. Tutup halaman login ini
             this.dispose();
 
         } else {
-            // Jika login gagal:
             JOptionPane.showMessageDialog(this, 
                 "NIM atau Password salah.", 
                 "Login Gagal", 
                 JOptionPane.ERROR_MESSAGE);
             
-            // Opsional: Kosongkan field password
             jPasswordField1.setText("");
         }
     }
