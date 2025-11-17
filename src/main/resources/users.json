@@ -1,0 +1,14 @@
+[
+  {
+    "nim": "1234567890",
+    "nama": "Supriyantoo",
+    "password": "123",
+    "role": "Mahasiswa"
+  },
+  {
+    "nim": "1111111111",
+    "nama": "Bapak Admin",
+    "password": "admin123",
+    "role": "Admin"
+  }
+]

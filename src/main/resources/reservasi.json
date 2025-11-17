@@ -1,0 +1,24 @@
+[
+  {
+    "idReservasi": "R001",
+    "nimPemesan": "2308925678",
+    "kodeRuang": "C-301",
+    "tanggal": "2024-11-14",
+    "jamMulai": "10:00",
+    "jamSelesai": "12:00",
+    "keperluan": "Seminar Proposal",
+    "jumlahOrang": 20,
+    "status": "Menunggu"
+  },
+  {
+    "idReservasi": "R002",
+    "nimPemesan": "2308925678",
+    "kodeRuang": "C-304",
+    "tanggal": "2024-04-10",
+    "jamMulai": "09:00",
+    "jamSelesai": "11:00",
+    "keperluan": "Kelas Pengganti",
+    "jumlahOrang": 40,
+    "status": "Disetujui"
+  }
+]
