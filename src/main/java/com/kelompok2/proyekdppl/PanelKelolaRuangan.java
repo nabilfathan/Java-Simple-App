@@ -1,6 +1,5 @@
 package com.kelompok2.proyekdppl;
 
-// File: PanelKelolaRuangan.java
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.TitledBorder;
@@ -14,7 +13,7 @@ public class PanelKelolaRuangan extends JPanel {
     private JTable tableRuangan;
     private DefaultTableModel tableModel;
     
-    // Form Edit
+    //Form Edit
     private JTextField fieldKode, fieldNama, fieldKapasitas;
     private JComboBox<String> comboJenis, comboStatus;
     private JCheckBox checkProyektor, checkAC, checkTV;
@@ -25,7 +24,7 @@ public class PanelKelolaRuangan extends JPanel {
         setBackground(Color.decode("#f0f2f5"));
         setBorder(new EmptyBorder(15, 15, 15, 15));
 
-        // 1. Header (Judul + Search)
+        //Header 
         JPanel headerPanel = new JPanel(new BorderLayout(10, 10));
         headerPanel.setOpaque(false);
         JLabel title = new JLabel("Kelola Data Ruangan");
@@ -37,21 +36,19 @@ public class PanelKelolaRuangan extends JPanel {
         headerPanel.add(searchField, BorderLayout.CENTER);
         add(headerPanel, BorderLayout.NORTH);
 
-        // 2. Konten (Tabel dan Form)
+        //Konten 
         JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
-        splitPane.setResizeWeight(0.6); // 60% untuk tabel, 40% untuk form
+        splitPane.setResizeWeight(0.6); 
         splitPane.setBorder(null);
         splitPane.setOpaque(false);
 
-        // 2a. Panel Tabel
         splitPane.setTopComponent(createTablePanel());
         
-        // 2b. Panel Form Edit
         splitPane.setBottomComponent(createEditFormPanel());
 
         add(splitPane, BorderLayout.CENTER);
         
-        loadDataRuangan(); // Panggil method untuk isi data
+        loadDataRuangan(); 
     }
 
     private JScrollPane createTablePanel() {
@@ -59,14 +56,13 @@ public class PanelKelolaRuangan extends JPanel {
         tableModel = new DefaultTableModel(columnNames, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
-                return false; // Buat tabel read-only
+                return false; 
             }
         };
         tableRuangan = new JTable(tableModel);
         tableRuangan.setRowHeight(25);
         tableRuangan.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         
-        // Tambahkan listener: Saat baris di-klik, isi data ke form
         tableRuangan.getSelectionModel().addListSelectionListener(e -> {
             if (!e.getValueIsAdjusting()) {
                 int selectedRow = tableRuangan.getSelectedRow();
@@ -86,13 +82,13 @@ public class PanelKelolaRuangan extends JPanel {
         formPanel.setBorder(new TitledBorder("Edit Ruangan Terpilih"));
         formPanel.setBackground(Color.WHITE);
 
-        JPanel fieldsPanel = new JPanel(new GridLayout(0, 2, 10, 10)); // 0 baris, 2 kolom
+        JPanel fieldsPanel = new JPanel(new GridLayout(0, 2, 10, 10)); 
         fieldsPanel.setOpaque(false);
         fieldsPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
         
         fieldsPanel.add(new JLabel("Kode ruangan:"));
         fieldKode = new JTextField();
-        fieldKode.setEditable(false); // Kode ruang biasanya tidak bisa diedit
+        fieldKode.setEditable(false); 
         fieldsPanel.add(fieldKode);
         
         fieldsPanel.add(new JLabel("Nama Ruangan:"));
@@ -111,7 +107,7 @@ public class PanelKelolaRuangan extends JPanel {
         comboStatus = new JComboBox<>(new String[]{"Aktif", "Tidak Aktif"});
         fieldsPanel.add(comboStatus);
         
-        // Fasilitas
+        //Fasilitas
         JPanel fasilitasPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         fasilitasPanel.setOpaque(false);
         checkProyektor = new JCheckBox("Proyektor");
@@ -131,7 +127,6 @@ public class PanelKelolaRuangan extends JPanel {
         simpanButton.setBackground(Color.decode("#4285F4"));
         simpanButton.setForeground(Color.WHITE);
         
-        // Nanti tambahkan ActionListener untuk simpan
         simpanButton.addActionListener(e -> simpanPerubahan());
         
         formPanel.add(simpanButton, BorderLayout.SOUTH);
@@ -139,7 +134,6 @@ public class PanelKelolaRuangan extends JPanel {
     }
     
     private void loadDataRuangan() {
-        // Hapus data lama
         tableModel.setRowCount(0);
         
         List<Ruang> ruanganList = mainApp.getDataManager().getAllRuangan();
@@ -157,7 +151,6 @@ public class PanelKelolaRuangan extends JPanel {
     private void populateEditForm(int selectedRow) {
         String kode = (String) tableModel.getValueAt(selectedRow, 0);
         
-        // Cari object Ruang asli dari DataManager
         Ruang r = mainApp.getDataManager().getAllRuangan().stream()
             .filter(ruang -> ruang.getKodeRuang().equals(kode))
             .findFirst().orElse(null);
@@ -169,25 +162,17 @@ public class PanelKelolaRuangan extends JPanel {
         fieldKapasitas.setText(String.valueOf(r.getKapasitas()));
         comboJenis.setSelectedItem(r.getJenis());
         comboStatus.setSelectedItem(r.getStatus());
-        
-        // Set Fasilitas
+       
         checkProyektor.setSelected(r.getFasilitas().isProyektor());
         checkAC.setSelected(r.getFasilitas().isAc());
         checkTV.setSelected(r.getFasilitas().isTv());
     }
     
     private void simpanPerubahan() {
-        // Logika untuk simpan (Tulis ke JSON)
-        // Ini lebih kompleks, untuk sekarang kita tampilkan pesan
+       
         JOptionPane.showMessageDialog(this, 
             "Perubahan untuk " + fieldKode.getText() + " disimpan (WIP)!", 
             "Simpan", 
             JOptionPane.INFORMATION_MESSAGE);
-        
-        // Idealnya:
-        // 1. Ambil data dari form
-        // 2. Update object Ruang di list DataManager
-        // 3. Panggil method DataManager.saveRuanganToJson()
-        // 4. Panggil loadDataRuangan() untuk refresh tabel
     }
 }

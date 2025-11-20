@@ -1,5 +1,4 @@
 package com.kelompok2.proyekdppl;
-// File: Reservasi.java
 
 public class Reservasi {
     private String idReservasi;
@@ -11,10 +10,7 @@ public class Reservasi {
     private String keperluan;
     private int jumlahOrang;
     private String status;
-    
-    // --- INI BAGIAN PENTING YANG HILANG ---
-    // (Getter untuk semua variabel)
-
+  
     public String getIdReservasi() {
         return idReservasi;
     }

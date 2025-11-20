@@ -1,5 +1,4 @@
 package com.kelompok2.proyekdppl;
-// File: DataManager.java
 
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -19,7 +18,6 @@ public class DataManager {
     private List<Reservasi> listReservasi;
 
     public DataManager() {
-        // Load semua data dari JSON. Kita panggil method generic
         listUsers = loadData("users.json", new TypeToken<List<User>>(){}.getType());
         listRuangan = loadData("ruangan.json", new TypeToken<List<Ruang>>(){}.getType());
         listReservasi = loadData("reservasi.json", new TypeToken<List<Reservasi>>(){}.getType());
@@ -29,26 +27,20 @@ public class DataManager {
                            listReservasi.size() + " reservasi dimuat.");
     }
 
-    /**
-     * Method helper generic untuk me-load file JSON dari resources
-     */
     private <T> T loadData(String filename, Type type) {
         try (InputStream inputStream = DataManager.class.getClassLoader().getResourceAsStream(filename)) {
             if (inputStream == null) {
                 System.err.println("File JSON tidak ditemukan di 'src/main/resources/': " + filename);
-                return (T) Collections.emptyList(); // Kembalikan list kosong
+                return (T) Collections.emptyList(); 
             }
             InputStreamReader reader = new InputStreamReader(inputStream, StandardCharsets.UTF_8);
             return new Gson().fromJson(reader, type);
         } catch (Exception e) {
             e.printStackTrace();
-            return (T) Collections.emptyList(); // Kembalikan list kosong jika error
+            return (T) Collections.emptyList(); 
         }
     }
 
-    /**
-     * Fungsi untuk Login. Sekarang mengembalikan objek User.
-     */
     public User login(String nim, String password) {
         if (listUsers == null || listUsers.isEmpty()) {
             System.err.println("Login gagal: Tidak ada data user.");
@@ -57,15 +49,13 @@ public class DataManager {
         for (User user : listUsers) {
             if (user.getNim().equals(nim) && user.getPassword().equals(password)) {
                 System.out.println("Login BERHASIL untuk: " + user.getNama() + " (Role: " + user.getRole() + ")");
-                return user; // Login Berhasil!
+                return user; 
             }
         }
         System.err.println("Login gagal: NIM atau Password salah.");
-        return null; // Login Gagal!
+        return null; 
     }
-
-    // --- Method untuk mengambil data (Contoh) ---
-    
+   
     public List<Reservasi> getReservasiByNIM(String nim) {
         return listReservasi.stream()
                 .filter(r -> r.getNimPemesan().equals(nim))
@@ -87,6 +77,6 @@ public class DataManager {
                 return user;
             }
         }
-        return null; // Jika tidak ketemu
+        return null;
     }
 }

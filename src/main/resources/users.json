@@ -1,14 +1,14 @@
 [
   {
-    "nim": "1234567890",
+    "nim": "12345",
     "nama": "Supriyantoo",
-    "password": "123",
+    "password": "mahasiswa",
     "role": "Mahasiswa"
   },
   {
-    "nim": "1111111111",
+    "nim": "12345",
     "nama": "Bapak Admin",
-    "password": "admin123",
+    "password": "admin",
     "role": "Admin"
   }
 ]

@@ -1,6 +1,5 @@
 package com.kelompok2.proyekdppl;
 
-// File: PanelLaporan.java
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -30,23 +29,18 @@ public class PanelLaporan extends JPanel {
         setBackground(Color.decode("#f0f2f5"));
         setBorder(new EmptyBorder(15, 15, 15, 15));
 
-        // 1. Panel Header (Filter)
         add(createHeaderPanel(), BorderLayout.NORTH);
 
-        // 2. Panel Konten (Summary, Grafik, Ekspor)
         JPanel contentPanel = new JPanel();
         contentPanel.setLayout(new BoxLayout(contentPanel, BoxLayout.Y_AXIS));
         contentPanel.setOpaque(false);
         
-        // 2a. Summary Cards
         contentPanel.add(createSummaryPanel());
         contentPanel.add(Box.createRigidArea(new Dimension(0, 15)));
-        
-        // 2b. Grafik
+      
         contentPanel.add(createGraphPanel());
         contentPanel.add(Box.createRigidArea(new Dimension(0, 15)));
-        
-        // 2c. Ekspor
+       
         contentPanel.add(createExportPanel());
         
         add(contentPanel, BorderLayout.CENTER);
@@ -60,19 +54,16 @@ public class PanelLaporan extends JPanel {
         title.setFont(new Font("SansSerif", Font.BOLD, 24));
         panel.add(title, BorderLayout.NORTH);
         
-        // Panel untuk semua filter
         JPanel filterPanel = new JPanel();
         filterPanel.setLayout(new BoxLayout(filterPanel, BoxLayout.Y_AXIS));
         filterPanel.setOpaque(false);
         filterPanel.setBorder(new TitledBorder("Filter Laporan"));
 
-        // Filter 1: Periode (Date Range)
         JPanel p1 = new JPanel(new FlowLayout(FlowLayout.LEFT));
         p1.setOpaque(false);
         p1.add(new JLabel("Periode:"));
-        p1.add(new JTextField("[1 Nov 2024 - 15 Nov 2024]", 20)); // Placeholder
+        p1.add(new JTextField("[1 Nov 2024 - 15 Nov 2024]", 20)); 
         
-        // Filter 2: Dropdown
         JPanel p2 = new JPanel(new FlowLayout(FlowLayout.LEFT));
         p2.setOpaque(false);
         p2.add(new JLabel("Periode:"));
@@ -92,7 +83,6 @@ public class PanelLaporan extends JPanel {
         panel.setOpaque(false);
         panel.setBorder(new TitledBorder("Ringkasan"));
 
-        // Data (nanti ambil dari DataManager)
         long total = 1245;
         long disetujui = 1237;
         long ditolak = 18;
@@ -110,7 +100,6 @@ public class PanelLaporan extends JPanel {
         panel.setOpaque(false);
         panel.setBorder(new TitledBorder("Grafik Penggunaan Ruangan"));
         
-        // Simulasi Bar Chart pakai JProgressBar
         panel.add(createGraphBar("Kelas C-301", 75));
         panel.add(Box.createRigidArea(new Dimension(0, 5)));
         panel.add(createGraphBar("Kelas C-302", 57));
@@ -135,12 +124,9 @@ public class PanelLaporan extends JPanel {
         panel.add(btnExcel);
         panel.add(btnCsv);
         
-        // TODO: Tambahkan Aksi
-        
         return panel;
     }
     
-    // Helper untuk 1 kartu summary
     private JPanel createSummaryCard(String title, String value) {
         JPanel card = new JPanel(new BorderLayout());
         card.setBackground(Color.WHITE);
@@ -161,19 +147,16 @@ public class PanelLaporan extends JPanel {
         return card;
     }
     
-    // Helper untuk 1 baris grafik
     private JPanel createGraphBar(String label, int value) {
         JPanel barPanel = new JPanel(new BorderLayout(10, 0));
         barPanel.setOpaque(false);
         
         JLabel title = new JLabel(label);
-        title.setPreferredSize(new Dimension(100, 20)); // Set lebar label
-        
+        title.setPreferredSize(new Dimension(100, 20));     
         JProgressBar bar = new JProgressBar(0, 100);
         bar.setValue(value);
         bar.setStringPainted(true);
-        bar.setString(value + "%");
-        
+        bar.setString(value + "%");       
         barPanel.add(title, BorderLayout.WEST);
         barPanel.add(bar, BorderLayout.CENTER);
         return barPanel;
