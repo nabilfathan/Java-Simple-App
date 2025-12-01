@@ -13,7 +13,7 @@ public class PanelKelolaRuangan extends JPanel {
     private JTable tableRuangan;
     private DefaultTableModel tableModel;
     
-    //Form Edit
+    // Form Edit
     private JTextField fieldKode, fieldNama, fieldKapasitas;
     private JComboBox<String> comboJenis, comboStatus;
     private JCheckBox checkProyektor, checkAC, checkTV;
@@ -24,7 +24,7 @@ public class PanelKelolaRuangan extends JPanel {
         setBackground(Color.decode("#f0f2f5"));
         setBorder(new EmptyBorder(15, 15, 15, 15));
 
-        //Header 
+        // Header 
         JPanel headerPanel = new JPanel(new BorderLayout(10, 10));
         headerPanel.setOpaque(false);
         JLabel title = new JLabel("Kelola Data Ruangan");
@@ -36,14 +36,13 @@ public class PanelKelolaRuangan extends JPanel {
         headerPanel.add(searchField, BorderLayout.CENTER);
         add(headerPanel, BorderLayout.NORTH);
 
-        //Konten 
+        // Konten 
         JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
         splitPane.setResizeWeight(0.6); 
         splitPane.setBorder(null);
         splitPane.setOpaque(false);
 
         splitPane.setTopComponent(createTablePanel());
-        
         splitPane.setBottomComponent(createEditFormPanel());
 
         add(splitPane, BorderLayout.CENTER);
@@ -107,7 +106,7 @@ public class PanelKelolaRuangan extends JPanel {
         comboStatus = new JComboBox<>(new String[]{"Aktif", "Tidak Aktif"});
         fieldsPanel.add(comboStatus);
         
-        //Fasilitas
+        // Fasilitas
         JPanel fasilitasPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         fasilitasPanel.setOpaque(false);
         checkProyektor = new JCheckBox("Proyektor");
@@ -151,10 +150,7 @@ public class PanelKelolaRuangan extends JPanel {
     private void populateEditForm(int selectedRow) {
         String kode = (String) tableModel.getValueAt(selectedRow, 0);
         
-        Ruang r = mainApp.getDataManager().getAllRuangan().stream()
-            .filter(ruang -> ruang.getKodeRuang().equals(kode))
-            .findFirst().orElse(null);
-            
+        Ruang r = mainApp.getDataManager().getRuanganByKode(kode);
         if (r == null) return;
         
         fieldKode.setText(r.getKodeRuang());
@@ -169,10 +165,85 @@ public class PanelKelolaRuangan extends JPanel {
     }
     
     private void simpanPerubahan() {
-       
-        JOptionPane.showMessageDialog(this, 
-            "Perubahan untuk " + fieldKode.getText() + " disimpan (WIP)!", 
-            "Simpan", 
-            JOptionPane.INFORMATION_MESSAGE);
+        // Konfirmasi sebelum menyimpan
+        int konfirmasi = JOptionPane.showConfirmDialog(
+            this,
+            "Apakah Anda yakin ingin menyimpan perubahan untuk ruangan " + fieldKode.getText() + "?",
+            "Konfirmasi Simpan Perubahan",
+            JOptionPane.YES_NO_OPTION,
+            JOptionPane.QUESTION_MESSAGE
+        );
+        
+        if (konfirmasi != JOptionPane.YES_OPTION) {
+            return;
+        }
+        
+        // Validasi input
+        if (fieldNama.getText().trim().isEmpty()) {
+            JOptionPane.showMessageDialog(this, 
+                "Nama ruangan tidak boleh kosong!", 
+                "Error", 
+                JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        
+        int kapasitas;
+        try {
+            kapasitas = Integer.parseInt(fieldKapasitas.getText().trim());
+            if (kapasitas <= 0) {
+                JOptionPane.showMessageDialog(this, 
+                    "Kapasitas harus lebih dari 0!", 
+                    "Error", 
+                    JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+        } catch (NumberFormatException ex) {
+            JOptionPane.showMessageDialog(this, 
+                "Kapasitas harus berupa angka!", 
+                "Error", 
+                JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        
+        // Dapatkan ruangan yang akan diupdate
+        String kode = fieldKode.getText();
+        Ruang ruang = mainApp.getDataManager().getRuanganByKode(kode);
+        if (ruang == null) {
+            JOptionPane.showMessageDialog(this, 
+                "Ruangan tidak ditemukan!", 
+                "Error", 
+                JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        
+        // Update data ruangan
+        ruang.setNamaRuang(fieldNama.getText().trim());
+        ruang.setKapasitas(kapasitas);
+        ruang.setJenis((String) comboJenis.getSelectedItem());
+        ruang.setStatus((String) comboStatus.getSelectedItem());
+        
+        // Update fasilitas
+        Ruang.Fasilitas fasilitas = ruang.getFasilitas();
+        fasilitas.setProyektor(checkProyektor.isSelected());
+        fasilitas.setAc(checkAC.isSelected());
+        fasilitas.setTv(checkTV.isSelected());
+        
+        // Simpan perubahan ke DataManager
+        boolean sukses = mainApp.getDataManager().updateRuangan(ruang);
+        
+        if (sukses) {
+            // Refresh tabel untuk menampilkan perubahan
+            loadDataRuangan();
+            
+            JOptionPane.showMessageDialog(this, 
+                "Perubahan untuk " + kode + " berhasil disimpan!\nStatus: " + ruang.getStatus(), 
+                "Sukses", 
+                JOptionPane.INFORMATION_MESSAGE);
+        } else {
+            JOptionPane.showMessageDialog(this, 
+                "Gagal menyimpan perubahan!", 
+                "Error", 
+                JOptionPane.ERROR_MESSAGE);
+        }
     }
 }

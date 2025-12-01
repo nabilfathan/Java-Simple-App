@@ -1,10 +1,10 @@
 [
   {
     "kodeRuang": "C-301",
-    "namaRuang": "Kelas C-301",
-    "kapasitas": 45,
+    "namaRuang": "Kelas C-311",
+    "kapasitas": 40,
     "jenis": "Kelas",
-    "status": "Aktif",
+    "status": "Tidak Aktif",
     "fasilitas": {
       "proyektor": true,
       "ac": true,

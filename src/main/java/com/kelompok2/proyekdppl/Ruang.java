@@ -8,6 +8,7 @@ public class Ruang {
     private String status;
     private Fasilitas fasilitas;
 
+    // Getter methods
     public String getKodeRuang() {
         return kodeRuang;
     }
@@ -32,7 +33,29 @@ public class Ruang {
         return fasilitas;
     }
 
-    public class Fasilitas {
+    // SETTER METHODS - penting untuk mengupdate data
+    public void setNamaRuang(String namaRuang) {
+        this.namaRuang = namaRuang;
+    }
+
+    public void setKapasitas(int kapasitas) {
+        this.kapasitas = kapasitas;
+    }
+
+    public void setJenis(String jenis) {
+        this.jenis = jenis;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public void setFasilitas(Fasilitas fasilitas) {
+        this.fasilitas = fasilitas;
+    }
+
+    // Inner class Fasilitas
+    public static class Fasilitas {
         private boolean proyektor;
         private boolean ac;
         private boolean tv;
@@ -47,6 +70,19 @@ public class Ruang {
 
         public boolean isTv() {
             return tv;
+        }
+
+        // SETTER METHODS untuk Fasilitas
+        public void setProyektor(boolean proyektor) {
+            this.proyektor = proyektor;
+        }
+
+        public void setAc(boolean ac) {
+            this.ac = ac;
+        }
+
+        public void setTv(boolean tv) {
+            this.tv = tv;
         }
     }
 }

@@ -6,6 +6,7 @@ import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GridLayout;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -155,13 +156,84 @@ public class PanelReservasiMahasiswa extends JPanel {
             btnKembali.addActionListener(e -> showSubPanel("PILIHAN"));
             
             btnReservasi.addActionListener(e -> {
-               
+                List<String> errors = new ArrayList<>();
+                
+                // VALIDASI 1: Checkbox persetujuan
                 if (!checkSetuju.isSelected()) {
-                    JOptionPane.showMessageDialog(this, "Anda harus menyetujui aturan reservasi.", "Error", JOptionPane.ERROR_MESSAGE);
+                    errors.add("• Anda harus menyetujui aturan reservasi");
+                }
+                
+                // VALIDASI 2: Judul kegiatan tidak boleh kosong
+                if (fieldJudul.getText().trim().isEmpty()) {
+                    errors.add("• Judul kegiatan tidak boleh kosong");
+                }
+                
+                // VALIDASI 3: Deskripsi tidak boleh kosong
+                if (areaDeskripsi.getText().trim().isEmpty()) {
+                    errors.add("• Deskripsi kegiatan tidak boleh kosong");
+                }
+                
+                // VALIDASI 4: Fakultas harus dipilih
+                if (comboFakultas.getSelectedIndex() == 0) {
+                    errors.add("• Silakan pilih fakultas");
+                }
+                
+                // VALIDASI 5: Ruangan harus dipilih
+                if (comboKelas.getSelectedItem() == null || comboKelas.getSelectedIndex() == -1) {
+                    errors.add("• Silakan pilih ruangan");
+                }
+                
+                // VALIDASI 6: Tanggal harus diisi
+                if (fieldTanggal.getText().trim().isEmpty()) {
+                    errors.add("• Tanggal tidak boleh kosong");
+                }
+                
+                // VALIDASI 7: Waktu mulai harus diisi
+                if (fieldMulai.getText().trim().isEmpty()) {
+                    errors.add("• Waktu mulai tidak boleh kosong");
+                }
+                
+                // VALIDASI 8: Waktu selesai harus diisi
+                if (fieldSelesai.getText().trim().isEmpty()) {
+                    errors.add("• Waktu selesai tidak boleh kosong");
+                }
+                
+                // VALIDASI 9: Kapasitas harus diisi dan berupa angka
+                String kapasitasText = fieldKapasitas.getText().trim();
+                if (kapasitasText.isEmpty()) {
+                    errors.add("• Kapasitas tidak boleh kosong");
+                } else {
+                    try {
+                        int kapasitas = Integer.parseInt(kapasitasText);
+                        if (kapasitas <= 0) {
+                            errors.add("• Kapasitas harus lebih dari 0");
+                        }
+                    } catch (NumberFormatException ex) {
+                        errors.add("• Kapasitas harus berupa angka");
+                    }
+                }
+                
+                // Tampilkan semua error sekaligus jika ada
+                if (!errors.isEmpty()) {
+                    String errorMessage = "Mohon perbaiki kesalahan berikut:\n\n" +
+                        String.join("\n", errors) +
+                        "\n\nSilakan lengkapi semua field yang wajib diisi.";
+                    
+                    JOptionPane.showMessageDialog(this, 
+                        errorMessage, 
+                        "Data Reservasi Tidak Lengkap", 
+                        JOptionPane.ERROR_MESSAGE);
                     return;
                 }
-                              
-                JOptionPane.showMessageDialog(this, "Reservasi berhasil dibuat dan menunggu persetujuan.", "Sukses", JOptionPane.INFORMATION_MESSAGE);
+                
+                // VALIDASI TAMBAHAN: Waktu selesai harus setelah waktu mulai
+                // (Anda bisa menambahkan logika perbandingan waktu di sini)
+                
+                // Jika semua validasi passed, tampilkan pesan sukses
+                JOptionPane.showMessageDialog(this, 
+                    "Reservasi berhasil dibuat dan menunggu persetujuan.", 
+                    "Sukses", 
+                    JOptionPane.INFORMATION_MESSAGE);
                 mainApp.showPanel("HOME_MHS"); 
             });
         }
