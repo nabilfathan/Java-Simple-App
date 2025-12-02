@@ -5,6 +5,7 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
+import java.awt.Frame;
 import java.awt.GridLayout;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -14,14 +15,19 @@ import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.JToggleButton;
+import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.TitledBorder;
+import javax.swing.event.AncestorEvent;
+import javax.swing.event.AncestorListener;
 
 public class PanelKelolaReservasi extends JPanel {
 
@@ -48,14 +54,41 @@ public class PanelKelolaReservasi extends JPanel {
         add(scrollPane, BorderLayout.CENTER);
         
         loadDataReservasi();
+
+        this.addAncestorListener(new AncestorListener() {
+            @Override
+            public void ancestorAdded(AncestorEvent event) {
+                loadDataReservasi();
+            }
+            @Override public void ancestorRemoved(AncestorEvent event) {}
+            @Override public void ancestorMoved(AncestorEvent event) {}
+        });
     }
     
     private JPanel createHeaderPanel() {
         JPanel headerPanel = new JPanel(new BorderLayout(10, 10));
         headerPanel.setOpaque(false);
+        
+        // --- JUDUL & TOMBOL TAMBAH ---
+        JPanel topRow = new JPanel(new BorderLayout());
+        topRow.setOpaque(false);
+        
         JLabel title = new JLabel("Kelola Reservasi");
         title.setFont(new Font("SansSerif", Font.BOLD, 24));
         
+        JButton btnTambah = new JButton("+ Buat Baru");
+        btnTambah.setBackground(Color.decode("#007BFF"));
+        btnTambah.setForeground(Color.WHITE);
+        btnTambah.setFont(new Font("SansSerif", Font.BOLD, 14));
+        btnTambah.setFocusPainted(false);
+        
+        // Listener Tombol Tambah
+        btnTambah.addActionListener(e -> showDialogTambah());
+        
+        topRow.add(title, BorderLayout.WEST);
+        topRow.add(btnTambah, BorderLayout.EAST);
+        
+        // --- FILTER ---
         JPanel filterPanel = new JPanel(new BorderLayout(10, 10));
         filterPanel.setOpaque(false);
         
@@ -85,29 +118,105 @@ public class PanelKelolaReservasi extends JPanel {
         filterPanel.add(searchField, BorderLayout.NORTH);
         filterPanel.add(buttonPanel, BorderLayout.CENTER);
         
-        headerPanel.add(title, BorderLayout.NORTH);
+        headerPanel.add(topRow, BorderLayout.NORTH); // Ubah disini biar tombol tambah di atas
         headerPanel.add(filterPanel, BorderLayout.CENTER);
         
         return headerPanel;
     }
     
-    private void loadDataReservasi() {
-        listPanel.removeAll();
+    // --- FITUR BARU: DIALOG TAMBAH RESERVASI ---
+    private void showDialogTambah() {
+        JDialog dialog = new JDialog((Frame) SwingUtilities.getWindowAncestor(this), "Buat Reservasi Manual", true);
+        dialog.setSize(400, 500);
+        dialog.setLocationRelativeTo(this);
+        dialog.setLayout(new BorderLayout());
         
-        List<Reservasi> reservasiList = mainApp.getDataManager().getAllReservasi();
+        JPanel form = new JPanel(new GridLayout(7, 2, 10, 10));
+        form.setBorder(new EmptyBorder(20, 20, 20, 20));
         
-        List<Reservasi> filteredList = reservasiList.stream()
-            .filter(r -> filterStatus.equals("Semua") || r.getStatus().equals(filterStatus))
-            .collect(Collectors.toList());
-
-        JScrollPane scrollPane = (JScrollPane) listPanel.getParent().getParent();
-        scrollPane.setBorder(new TitledBorder(filterStatus + " (" + filteredList.size() + ")"));
-
-        for (Reservasi r : filteredList) {
-            listPanel.add(createReservasiCard(r));
-            listPanel.add(Box.createRigidArea(new Dimension(0, 10))); 
+        JTextField txtNIM = new JTextField();
+        JComboBox<String> cmbRuangan = new JComboBox<>();
+        JTextField txtTanggal = new JTextField("YYYY-MM-DD");
+        JTextField txtMulai = new JTextField("08:00");
+        JTextField txtSelesai = new JTextField("10:00");
+        JTextField txtKeperluan = new JTextField("Kegiatan Akademik");
+        
+        // Isi Combo Ruangan
+        List<Ruang> listR = mainApp.getDataManager().getAllRuangan();
+        for(Ruang r : listR) {
+            cmbRuangan.addItem(r.getKodeRuang() + " (" + r.getNamaRuang() + ")");
         }
         
+        form.add(new JLabel("NIM Mahasiswa:"));
+        form.add(txtNIM);
+        form.add(new JLabel("Pilih Ruangan:"));
+        form.add(cmbRuangan);
+        form.add(new JLabel("Tanggal:"));
+        form.add(txtTanggal);
+        form.add(new JLabel("Jam Mulai:"));
+        form.add(txtMulai);
+        form.add(new JLabel("Jam Selesai:"));
+        form.add(txtSelesai);
+        form.add(new JLabel("Keperluan:"));
+        form.add(txtKeperluan);
+        
+        JButton btnSimpan = new JButton("Simpan Reservasi");
+        btnSimpan.setBackground(Color.decode("#28a745"));
+        btnSimpan.setForeground(Color.WHITE);
+        
+        btnSimpan.addActionListener(e -> {
+            if(txtNIM.getText().isEmpty() || txtTanggal.getText().isEmpty()) {
+                JOptionPane.showMessageDialog(dialog, "Data tidak lengkap!");
+                return;
+            }
+            
+            String selectedRuangFull = (String) cmbRuangan.getSelectedItem();
+            String kodeRuang = selectedRuangFull.split(" ")[0];
+            
+            Reservasi rBaru = new Reservasi(
+                "RES-ADM-" + System.currentTimeMillis(),
+                txtNIM.getText(),
+                kodeRuang,
+                txtTanggal.getText(),
+                txtMulai.getText(),
+                txtSelesai.getText(),
+                txtKeperluan.getText() + " (Via Admin)",
+                "Disetujui" // ADMIN POWER: Langsung disetujui!
+            );
+            
+            mainApp.getDataManager().addReservasi(rBaru);
+            JOptionPane.showMessageDialog(dialog, "Berhasil ditambahkan!");
+            loadDataReservasi();
+            dialog.dispose();
+        });
+        
+        dialog.add(new JLabel("  Form Input Admin"), BorderLayout.NORTH);
+        dialog.add(form, BorderLayout.CENTER);
+        dialog.add(btnSimpan, BorderLayout.SOUTH);
+        dialog.setVisible(true);
+    }
+    
+    private void loadDataReservasi() {
+        listPanel.removeAll();
+        List<Reservasi> reservasiList = mainApp.getDataManager().getAllReservasi();
+        
+        if (reservasiList == null || reservasiList.isEmpty()) {
+            listPanel.add(new JLabel("Belum ada data reservasi."));
+        } else {
+            List<Reservasi> filteredList = reservasiList.stream()
+                .filter(r -> filterStatus.equals("Semua") || r.getStatus().equalsIgnoreCase(filterStatus))
+                .collect(Collectors.toList());
+
+            if(listPanel.getParent() != null && listPanel.getParent().getParent() instanceof JScrollPane) {
+                 JScrollPane scrollPane = (JScrollPane) listPanel.getParent().getParent();
+                 scrollPane.setBorder(new TitledBorder(filterStatus + " (" + filteredList.size() + ")"));
+            }
+
+            for (Reservasi r : filteredList) {
+                listPanel.add(createReservasiCard(r));
+                listPanel.add(Box.createRigidArea(new Dimension(0, 10))); 
+            }
+        }
         listPanel.revalidate();
         listPanel.repaint();
     }
@@ -121,55 +230,62 @@ public class PanelKelolaReservasi extends JPanel {
         card.setMaximumSize(new Dimension(Integer.MAX_VALUE, 130)); 
         
         User u = mainApp.getDataManager().getUserByNIM(r.getNimPemesan());
-        String nama = (u != null) ? u.getNama() : "User Tidak Ditemukan";
+        String nama = (u != null) ? u.getNama() : "NIM: " + r.getNimPemesan();
         
         JPanel infoPanel = new JPanel();
         infoPanel.setLayout(new BoxLayout(infoPanel, BoxLayout.Y_AXIS));
         infoPanel.setOpaque(false);
         
-        JLabel namaLabel = new JLabel(nama + " (" + r.getNimPemesan() + ")");
-        namaLabel.setFont(new Font("SansSerif", Font.BOLD, 16));
-        
-        JLabel keperluanLabel = new JLabel(r.getKeperluan());
-        keperluanLabel.setFont(new Font("SansSerif", Font.PLAIN, 14));
-        
-        JLabel jumlahLabel = new JLabel(r.getJumlahOrang() + " Orang");
-        jumlahLabel.setFont(new Font("SansSerif", Font.ITALIC, 12));
-        
-        infoPanel.add(namaLabel);
-        infoPanel.add(keperluanLabel);
+        infoPanel.add(new JLabel("<html><b>" + nama + "</b></html>"));
+        infoPanel.add(new JLabel(r.getKeperluan()));
         infoPanel.add(Box.createRigidArea(new Dimension(0, 5)));
-        infoPanel.add(jumlahLabel);
         
         JPanel waktuPanel = new JPanel();
         waktuPanel.setLayout(new BoxLayout(waktuPanel, BoxLayout.Y_AXIS));
         waktuPanel.setOpaque(false);
         
-        waktuPanel.add(new JLabel(r.getKodeRuang()));
-        waktuPanel.add(new JLabel(r.getTanggal()));
+        waktuPanel.add(new JLabel("Ruang: " + r.getKodeRuang()));
+        waktuPanel.add(new JLabel("Tgl: " + r.getTanggal()));
         waktuPanel.add(new JLabel(r.getJamMulai() + " - " + r.getJamSelesai()));
         
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 0));
         buttonPanel.setOpaque(false);
         JButton btnSetuju = new JButton("Setujui");
         JButton btnTolak = new JButton("Tolak");
-        JButton btnDetail = new JButton("Lihat Detail");
+        
+        btnSetuju.setBackground(new Color(40, 167, 69)); btnSetuju.setForeground(Color.WHITE);
+        btnTolak.setBackground(new Color(220, 53, 69));  btnTolak.setForeground(Color.WHITE);
         
         buttonPanel.add(btnSetuju);
         buttonPanel.add(btnTolak);
-        buttonPanel.add(btnDetail);
         
-        if (!r.getStatus().equals("Menunggu")) {
+        if (!r.getStatus().equalsIgnoreCase("Menunggu")) {
             btnSetuju.setVisible(false);
             btnTolak.setVisible(false);
+            JLabel lblStatus = new JLabel(r.getStatus().toUpperCase());
+            lblStatus.setFont(new Font("SansSerif", Font.BOLD, 12));
+            lblStatus.setForeground(r.getStatus().equalsIgnoreCase("Disetujui") ? new Color(40, 167, 69) : Color.RED);
+            buttonPanel.add(lblStatus);
         }
         
         btnSetuju.addActionListener(e -> {
-            r.setStatus("Disetujui"); 
-            JOptionPane.showMessageDialog(this, "Reservasi " + r.getIdReservasi() + " disetujui!");
-            loadDataReservasi(); 
+            if (JOptionPane.showConfirmDialog(this, "Setujui?", "Konfirmasi", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+                if(mainApp.getDataManager().updateStatusReservasi(r.getIdReservasi(), "Disetujui")) {
+                    JOptionPane.showMessageDialog(this, "Berhasil!");
+                    loadDataReservasi();
+                }
+            }
         });
         
+        btnTolak.addActionListener(e -> {
+            if (JOptionPane.showConfirmDialog(this, "Tolak?", "Konfirmasi", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+                if(mainApp.getDataManager().updateStatusReservasi(r.getIdReservasi(), "Ditolak")) {
+                    JOptionPane.showMessageDialog(this, "Ditolak.");
+                    loadDataReservasi();
+                }
+            }
+        });
+
         card.add(infoPanel, BorderLayout.NORTH);
         card.add(waktuPanel, BorderLayout.EAST);
         card.add(buttonPanel, BorderLayout.SOUTH);

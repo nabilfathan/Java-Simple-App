@@ -124,7 +124,8 @@ public class MainApp {
                 navPanelContainer.add(navAdmin, BorderLayout.CENTER);
                 showPanel("HOME_ADMIN");
             } else {
-                panelHomeMhs.setUserName(user.getNama());
+                panelHomeMhs.setStudentInfo(user.getNama(), user.getNim());
+                panelReservasiMahasiswa.setUserNIM(user.getNim());
                 navPanelContainer.add(navMahasiswa, BorderLayout.CENTER);
                 showPanel("HOME_MHS");
             }

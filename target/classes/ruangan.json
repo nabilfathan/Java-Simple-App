@@ -6,8 +6,8 @@
     "jenis": "Kelas",
     "status": "Tidak Aktif",
     "fasilitas": {
-      "proyektor": true,
       "ac": true,
+      "proyektor": true,
       "tv": false
     }
   },
@@ -16,23 +16,35 @@
     "namaRuang": "Lab Komputer A-101",
     "kapasitas": 30,
     "jenis": "Laboratorium",
-    "status": "Aktif",
+    "status": "Tidak Aktif",
     "fasilitas": {
-      "proyektor": true,
       "ac": true,
+      "proyektor": true,
       "tv": true
     }
   },
   {
     "kodeRuang": "C-302",
     "namaRuang": "Kelas C-302",
-    "kapasitas": 45,
+    "kapasitas": 50,
     "jenis": "Kelas",
-    "status": "Tidak Aktif",
+    "status": "Aktif",
     "fasilitas": {
+      "ac": true,
       "proyektor": true,
-      "ac": false,
-      "tv": false
+      "tv": true
+    }
+  },
+  {
+    "kodeRuang": "C-305",
+    "namaRuang": "Kelas C",
+    "kapasitas": 40,
+    "jenis": "Kelas",
+    "status": "Aktif",
+    "fasilitas": {
+      "ac": true,
+      "proyektor": true,
+      "tv": true
     }
   }
 ]

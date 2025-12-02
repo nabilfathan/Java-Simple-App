@@ -4,85 +4,65 @@ public class Ruang {
     private String kodeRuang;
     private String namaRuang;
     private int kapasitas;
-    private String jenis;
-    private String status;
+    private String jenis; // "Kelas" atau "Laboratorium"
+    private String status; // "Aktif" atau "Tidak Aktif"
     private Fasilitas fasilitas;
 
-    // Getter methods
-    public String getKodeRuang() {
-        return kodeRuang;
-    }
+    // Constructor Kosong (Penting untuk JSON)
+    public Ruang() {}
 
-    public String getNamaRuang() {
-        return namaRuang;
-    }
-
-    public int getKapasitas() {
-        return kapasitas;
-    }
-
-    public String getJenis() {
-        return jenis;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public Fasilitas getFasilitas() {
-        return fasilitas;
-    }
-
-    // SETTER METHODS - penting untuk mengupdate data
-    public void setNamaRuang(String namaRuang) {
+    // Constructor Lengkap (Sesuai dengan PanelKelolaRuangan)
+    public Ruang(String kodeRuang, String namaRuang, int kapasitas, String jenis, String status, Fasilitas fasilitas) {
+        this.kodeRuang = kodeRuang;
         this.namaRuang = namaRuang;
-    }
-
-    public void setKapasitas(int kapasitas) {
         this.kapasitas = kapasitas;
-    }
-
-    public void setJenis(String jenis) {
         this.jenis = jenis;
-    }
-
-    public void setStatus(String status) {
         this.status = status;
-    }
-
-    public void setFasilitas(Fasilitas fasilitas) {
         this.fasilitas = fasilitas;
     }
 
-    // Inner class Fasilitas
+    // --- GETTER & SETTER ---
+    public String getKodeRuang() { return kodeRuang; }
+    public void setKodeRuang(String kodeRuang) { this.kodeRuang = kodeRuang; }
+
+    public String getNamaRuang() { return namaRuang; }
+    public void setNamaRuang(String namaRuang) { this.namaRuang = namaRuang; }
+
+    public int getKapasitas() { return kapasitas; }
+    public void setKapasitas(int kapasitas) { this.kapasitas = kapasitas; }
+
+    public String getJenis() { return jenis; }
+    public void setJenis(String jenis) { this.jenis = jenis; }
+
+    public String getStatus() { return status; }
+    public void setStatus(String status) { this.status = status; }
+
+    public Fasilitas getFasilitas() { return fasilitas; }
+    public void setFasilitas(Fasilitas fasilitas) { this.fasilitas = fasilitas; }
+
+    // --- INNER CLASS FASILITAS (STATIC) ---
     public static class Fasilitas {
-        private boolean proyektor;
         private boolean ac;
+        private boolean proyektor;
         private boolean tv;
-        
-        public boolean isProyektor() {
-            return proyektor;
-        }
 
-        public boolean isAc() {
-            return ac;
-        }
+        public Fasilitas() {}
 
-        public boolean isTv() {
-            return tv;
-        }
-
-        // SETTER METHODS untuk Fasilitas
-        public void setProyektor(boolean proyektor) {
-            this.proyektor = proyektor;
-        }
-
-        public void setAc(boolean ac) {
+        // Constructor Fasilitas (Urutan: AC, Proyektor, TV)
+        public Fasilitas(boolean ac, boolean proyektor, boolean tv) {
             this.ac = ac;
-        }
-
-        public void setTv(boolean tv) {
+            this.proyektor = proyektor;
             this.tv = tv;
         }
+
+        // Getter Fasilitas
+        public boolean isAc() { return ac; }
+        public void setAc(boolean ac) { this.ac = ac; }
+
+        public boolean isProyektor() { return proyektor; }
+        public void setProyektor(boolean proyektor) { this.proyektor = proyektor; }
+
+        public boolean isTv() { return tv; }
+        public void setTv(boolean tv) { this.tv = tv; }
     }
 }

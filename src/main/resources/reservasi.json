@@ -1,24 +1,52 @@
 [
   {
-    "idReservasi": "R001",
-    "nimPemesan": "2308925678",
-    "kodeRuang": "C-301",
-    "tanggal": "2024-11-14",
-    "jamMulai": "10:00",
-    "jamSelesai": "12:00",
-    "keperluan": "Seminar Proposal",
-    "jumlahOrang": 20,
-    "status": "Menunggu"
+    "idReservasi": "RES-1764695688127",
+    "nimPemesan": "UNKNOWN",
+    "kodeRuang": "C-302",
+    "tanggal": "2025/10/10",
+    "jamMulai": "08:00",
+    "jamSelesai": "10:00",
+    "keperluan": "- (-)",
+    "status": "Disetujui"
   },
   {
-    "idReservasi": "R002",
-    "nimPemesan": "2308925678",
-    "kodeRuang": "C-304",
-    "tanggal": "2024-04-10",
-    "jamMulai": "09:00",
-    "jamSelesai": "11:00",
-    "keperluan": "Kelas Pengganti",
-    "jumlahOrang": 40,
+    "idReservasi": "RES-1764695907382",
+    "nimPemesan": "UNKNOWN",
+    "kodeRuang": "C-302",
+    "tanggal": "2025/10/04",
+    "jamMulai": "08:00",
+    "jamSelesai": "10:00",
+    "keperluan": "- (-)",
+    "status": "Disetujui"
+  },
+  {
+    "idReservasi": "RES-1764696322397",
+    "nimPemesan": "UNKNOWN",
+    "kodeRuang": "C-302",
+    "tanggal": "2002/20/9",
+    "jamMulai": "10:00",
+    "jamSelesai": "12:00",
+    "keperluan": "- (-)",
+    "status": "Ditolak"
+  },
+  {
+    "idReservasi": "RES-1764696742352",
+    "nimPemesan": "12345",
+    "kodeRuang": "C-302",
+    "tanggal": "2025/5/7",
+    "jamMulai": "10.00",
+    "jamSelesai": "08.00",
+    "keperluan": "- (-)",
+    "status": "Disetujui"
+  },
+  {
+    "idReservasi": "RES-ADM-1764697603918",
+    "nimPemesan": "12345",
+    "kodeRuang": "C-301",
+    "tanggal": "YYYY-MM-DD",
+    "jamMulai": "08:00",
+    "jamSelesai": "10:00",
+    "keperluan": "Kegiatan Akademik (Via Admin)",
     "status": "Disetujui"
   }
 ]

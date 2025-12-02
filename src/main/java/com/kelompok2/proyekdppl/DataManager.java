@@ -1,11 +1,12 @@
 package com.kelompok2.proyekdppl;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.lang.reflect.Type;
-import java.nio.charset.StandardCharsets;
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -18,159 +19,163 @@ public class DataManager {
     private List<Reservasi> listReservasi;
     private Gson gson;
 
+    // PATH FILES
+    private final String BASE_PATH = System.getProperty("user.dir") + "/src/main/resources/";
+    private final String PATH_RESERVASI = BASE_PATH + "reservasi.json";
+    private final String PATH_RUANGAN = BASE_PATH + "ruangan.json";
+    private final String PATH_USERS = BASE_PATH + "users.json";
+
     public DataManager() {
         this.gson = new GsonBuilder().setPrettyPrinting().create();
         
-        listUsers = loadData("users.json", new TypeToken<List<User>>(){}.getType());
-        listRuangan = loadData("ruangan.json", new TypeToken<List<Ruang>>(){}.getType());
-        listReservasi = loadData("reservasi.json", new TypeToken<List<Reservasi>>(){}.getType());
+        System.out.println("=== DEBUG PATH ===");
+        System.out.println("Lokasi File Reservasi: " + PATH_RESERVASI);
         
-        System.out.println("DataManager: " + listUsers.size() + " user, " + 
-                           listRuangan.size() + " ruangan, " + 
-                           listReservasi.size() + " reservasi dimuat.");
+        // Load data awal (Cukup sekali saat aplikasi mulai!)
+        listUsers = loadData(PATH_USERS, new TypeToken<List<User>>(){}.getType());
+        listRuangan = loadData(PATH_RUANGAN, new TypeToken<List<Ruang>>(){}.getType());
+        listReservasi = loadData(PATH_RESERVASI, new TypeToken<List<Reservasi>>(){}.getType());
+        
+        System.out.println("Data Loaded: " + listReservasi.size() + " reservasi.");
     }
 
-    private <T> T loadData(String filename, Type type) {
-        try (InputStream inputStream = DataManager.class.getClassLoader().getResourceAsStream(filename)) {
-            if (inputStream == null) {
-                System.err.println("File JSON tidak ditemukan di 'src/main/resources/': " + filename);
-                return (T) Collections.emptyList(); 
+    private <T> List<T> loadData(String filePath, Type type) {
+        File file = new File(filePath);
+        // Buat file kosong [] jika tidak ada, agar tidak error
+        if (!file.exists()) {
+            try {
+                file.getParentFile().mkdirs();
+                file.createNewFile();
+                try (FileWriter writer = new FileWriter(file)) {
+                    writer.write("[]");
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
             }
-            InputStreamReader reader = new InputStreamReader(inputStream, StandardCharsets.UTF_8);
-            return new Gson().fromJson(reader, type);
-        } catch (Exception e) {
+            return new ArrayList<>();
+        }
+        
+        try (FileReader reader = new FileReader(file)) {
+            List<T> data = gson.fromJson(reader, type);
+            return (data != null) ? data : new ArrayList<>();
+        } catch (IOException e) {
             e.printStackTrace();
-            return (T) Collections.emptyList(); 
+            return new ArrayList<>();
         }
     }
 
-    // Method untuk menyimpan data ruangan ke JSON
-    public boolean saveRuanganToJson() {
-        try {
-            // Cari file ruangan.json di beberapa lokasi yang mungkin
-            File file = findRuanganJsonFile();
-            
-            if (file == null) {
-                System.err.println("File ruangan.json tidak ditemukan di mana pun!");
-                return false;
-            }
-            
-            // Tulis data ke file
-            try (FileWriter writer = new FileWriter(file)) {
-                gson.toJson(listRuangan, writer);
-                System.out.println("Data ruangan berhasil disimpan ke: " + file.getAbsolutePath());
+    // ==========================================================
+    // BAGIAN RESERVASI (SUDAH DIPERBAIKI)
+    // ==========================================================
+
+    public void saveReservasi() {
+        try (FileWriter writer = new FileWriter(PATH_RESERVASI)) {
+            gson.toJson(listReservasi, writer);
+            System.out.println("SUKSES: Data reservasi tersimpan ke JSON.");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void addReservasi(Reservasi reservasiBaru) {
+        // 1. Update Memory (RAM) -> Agar UI langsung update tanpa baca file
+        listReservasi.add(reservasiBaru);
+        // 2. Update File (Disk) -> Agar permanen
+        saveReservasi(); 
+        System.out.println("Reservasi baru ditambahkan: " + reservasiBaru.getIdReservasi());
+    }
+
+    public boolean updateStatusReservasi(String idReservasi, String statusBaru) {
+        for (Reservasi r : listReservasi) {
+            if (r.getIdReservasi().equals(idReservasi)) {
+                r.setStatus(statusBaru); // Update RAM
+                saveReservasi();         // Update File
                 return true;
             }
-        } catch (Exception e) {
-            System.err.println("Gagal menyimpan data ruangan: " + e.getMessage());
-            e.printStackTrace();
-            return false;
         }
-    }
-    
-    // Method untuk mencari file ruangan.json
-    private File findRuanganJsonFile() {
-        // Coba beberapa lokasi yang mungkin
-        String[] possiblePaths = {
-            "src/main/resources/ruangan.json",
-            "resources/ruangan.json", 
-            "ruangan.json",
-            "target/classes/ruangan.json"
-        };
-        
-        for (String path : possiblePaths) {
-            File file = new File(path);
-            if (file.exists()) {
-                return file;
-            }
-        }
-        
-        // Jika tidak ditemukan, coba buat file baru di src/main/resources
-        try {
-            File newFile = new File("src/main/resources/ruangan.json");
-            newFile.getParentFile().mkdirs(); // Buat direktori jika belum ada
-            return newFile;
-        } catch (Exception e) {
-            System.err.println("Gagal membuat file ruangan.json baru: " + e.getMessage());
-        }
-        
-        return null;
+        return false;
     }
 
-    public User login(String nim, String password) {
-        if (listUsers == null || listUsers.isEmpty()) {
-            System.err.println("Login gagal: Tidak ada data user.");
-            return null;
+    // PERBAIKAN UTAMA: HAPUS reloadReservasi() DISINI
+    // Cukup kembalikan list yang ada di memori.
+    public List<Reservasi> getAllReservasi() { 
+        return listReservasi; 
+    }
+
+    // ==========================================================
+    // BAGIAN DASHBOARD & UTILS
+    // ==========================================================
+    
+    public int getCountTotal() { return listReservasi.size(); }
+    
+    public int getCountByStatus(String status) {
+        int count = 0;
+        for (Reservasi r : listReservasi) {
+            if (r.getStatus().equalsIgnoreCase(status)) count++;
         }
+        return count;
+    }
+
+    // ==========================================================
+    // BAGIAN USER & LOGIN
+    // ==========================================================
+
+    public User login(String nim, String password) {
+        if (listUsers == null) return null;
         for (User user : listUsers) {
             if (user.getNim().equals(nim) && user.getPassword().equals(password)) {
-                System.out.println("Login BERHASIL untuk: " + user.getNama() + " (Role: " + user.getRole() + ")");
-                return user; 
-            }
-        }
-        System.err.println("Login gagal: NIM atau Password salah.");
-        return null; 
-    }
-   
-    public List<Reservasi> getReservasiByNIM(String nim) {
-        return listReservasi.stream()
-                .filter(r -> r.getNimPemesan().equals(nim))
-                .collect(Collectors.toList());
-    }
-    
-    public List<Ruang> getAllRuangan() {
-        return listRuangan;
-    }
-    
-    public List<Reservasi> getAllReservasi() {
-        return listReservasi;
-    }
-    
-    public User getUserByNIM(String nim) {
-        if (listUsers == null) return null;
-        
-        for (User user : listUsers) {
-            if (user.getNim().equals(nim)) {
                 return user;
             }
         }
         return null;
     }
     
-    // Method untuk mendapatkan ruangan berdasarkan kode
-    public Ruang getRuanganByKode(String kodeRuang) {
-        if (listRuangan == null) return null;
-        
-        return listRuangan.stream()
-                .filter(ruang -> ruang.getKodeRuang().equals(kodeRuang))
-                .findFirst()
-                .orElse(null);
+    public User getUserByNIM(String nim) {
+        if (listUsers == null) return null;
+        for (User user : listUsers) {
+            if (user.getNim().equals(nim)) return user;
+        }
+        return null;
+    }
+
+    // ==========================================================
+    // BAGIAN RUANGAN
+    // ==========================================================
+    
+    public List<Ruang> getAllRuangan() { return listRuangan; }
+
+    public Ruang getRuanganByKode(String kode) {
+        return listRuangan.stream().filter(r -> r.getKodeRuang().equals(kode)).findFirst().orElse(null);
     }
     
-    // Method untuk update data ruangan
-    public boolean updateRuangan(Ruang ruangUpdated) {
+    public void saveRuangan() {
+        try (FileWriter writer = new FileWriter(PATH_RUANGAN)) {
+            gson.toJson(listRuangan, writer);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public boolean updateRuangan(Ruang ruangBaru) {
         if (listRuangan == null) return false;
-        
         for (int i = 0; i < listRuangan.size(); i++) {
-            Ruang ruang = listRuangan.get(i);
-            if (ruang.getKodeRuang().equals(ruangUpdated.getKodeRuang())) {
-                // Ganti ruangan lama dengan ruangan yang sudah diupdate
-                listRuangan.set(i, ruangUpdated);
-                System.out.println("Ruangan " + ruangUpdated.getKodeRuang() + " berhasil diupdate di memory");
-                
-                // Simpan perubahan ke JSON
-                boolean saveSuccess = saveRuanganToJson();
-                if (saveSuccess) {
-                    System.out.println("Perubahan ruangan " + ruangUpdated.getKodeRuang() + " berhasil disimpan ke JSON");
-                    return true;
-                } else {
-                    System.err.println("Gagal menyimpan perubahan ruangan ke JSON");
-                    return false;
-                }
+            if (listRuangan.get(i).getKodeRuang().equals(ruangBaru.getKodeRuang())) {
+                listRuangan.set(i, ruangBaru);
+                saveRuangan();
+                return true;
             }
         }
-        
-        System.err.println("Ruangan " + ruangUpdated.getKodeRuang() + " tidak ditemukan untuk diupdate");
         return false;
+    }
+    
+    public boolean deleteRuangan(String kodeRuang) {
+        boolean removed = listRuangan.removeIf(r -> r.getKodeRuang().equals(kodeRuang));
+        if (removed) saveRuangan();
+        return removed;
+    }
+
+    public void addRuangan(Ruang ruang) {
+        listRuangan.add(ruang);
+        saveRuangan();
     }
 }

@@ -27,9 +27,10 @@ public class PanelReservasiMahasiswa extends JPanel {
 
     private MainApp mainApp;
     private CardLayout cardLayout;
-    private JPanel cardsPanel; 
-    
     private PanelReservasiForm formPanel; 
+    
+    // TAMBAHAN: Variabel untuk menyimpan NIM mahasiswa yang login
+    private String currentUserNIM = "";
 
     public PanelReservasiMahasiswa(MainApp mainApp) {
         this.mainApp = mainApp;
@@ -38,13 +39,18 @@ public class PanelReservasiMahasiswa extends JPanel {
         setLayout(cardLayout); 
 
         JPanel pilihanPanel = createPilihanPanel();
-        
         formPanel = new PanelReservasiForm(); 
 
         add(pilihanPanel, "PILIHAN");
         add(formPanel, "FORM");
         
         showSubPanel("PILIHAN");
+    }
+    
+    // Method ini WAJIB dipanggil dari MainApp saat login berhasil
+    // Agar reservasi tersimpan atas nama mahasiswa yang benar
+    public void setUserNIM(String nim) {
+        this.currentUserNIM = nim;
     }
 
     private JPanel createPilihanPanel() {
@@ -123,9 +129,9 @@ public class PanelReservasiMahasiswa extends JPanel {
             
             JPanel panelWaktu = new JPanel(new GridLayout(1, 3, 5, 0));
             panelWaktu.setOpaque(false);
-            panelWaktu.add(new LabeledTextField("Tanggal", fieldTanggal));
-            panelWaktu.add(new LabeledTextField("Waktu Mulai", fieldMulai));
-            panelWaktu.add(new LabeledTextField("Waktu Selesai", fieldSelesai));
+            panelWaktu.add(new LabeledTextField("Tanggal (YYYY-MM-DD)", fieldTanggal));
+            panelWaktu.add(new LabeledTextField("Waktu Mulai (HH:MM)", fieldMulai));
+            panelWaktu.add(new LabeledTextField("Waktu Selesai (HH:MM)", fieldSelesai));
             formPanel.add(panelWaktu);
             
             JPanel panelDetail = new JPanel(new GridLayout(1, 2, 10, 0));
@@ -158,84 +164,79 @@ public class PanelReservasiMahasiswa extends JPanel {
             btnReservasi.addActionListener(e -> {
                 List<String> errors = new ArrayList<>();
                 
-                // VALIDASI 1: Checkbox persetujuan
-                if (!checkSetuju.isSelected()) {
-                    errors.add("• Anda harus menyetujui aturan reservasi");
+                // VALIDASI DASAR
+                if (!checkSetuju.isSelected()) errors.add("• Anda harus menyetujui aturan reservasi");
+                if (fieldJudul.getText().trim().isEmpty()) errors.add("• Judul kegiatan tidak boleh kosong");
+                if (areaDeskripsi.getText().trim().isEmpty()) errors.add("• Deskripsi kegiatan tidak boleh kosong");
+                if (comboFakultas.getSelectedIndex() == 0) errors.add("• Silakan pilih fakultas");
+                if (comboKelas.getSelectedItem() == null || comboKelas.getSelectedIndex() == -1) errors.add("• Silakan pilih ruangan");
+                if (fieldTanggal.getText().trim().isEmpty()) errors.add("• Tanggal tidak boleh kosong");
+                
+                // Cek Kapasitas
+                try {
+                    int kap = Integer.parseInt(fieldKapasitas.getText().trim());
+                    if (kap <= 0) errors.add("• Kapasitas harus > 0");
+                } catch (NumberFormatException ex) {
+                    errors.add("• Kapasitas harus angka");
                 }
                 
-                // VALIDASI 2: Judul kegiatan tidak boleh kosong
-                if (fieldJudul.getText().trim().isEmpty()) {
-                    errors.add("• Judul kegiatan tidak boleh kosong");
-                }
-                
-                // VALIDASI 3: Deskripsi tidak boleh kosong
-                if (areaDeskripsi.getText().trim().isEmpty()) {
-                    errors.add("• Deskripsi kegiatan tidak boleh kosong");
-                }
-                
-                // VALIDASI 4: Fakultas harus dipilih
-                if (comboFakultas.getSelectedIndex() == 0) {
-                    errors.add("• Silakan pilih fakultas");
-                }
-                
-                // VALIDASI 5: Ruangan harus dipilih
-                if (comboKelas.getSelectedItem() == null || comboKelas.getSelectedIndex() == -1) {
-                    errors.add("• Silakan pilih ruangan");
-                }
-                
-                // VALIDASI 6: Tanggal harus diisi
-                if (fieldTanggal.getText().trim().isEmpty()) {
-                    errors.add("• Tanggal tidak boleh kosong");
-                }
-                
-                // VALIDASI 7: Waktu mulai harus diisi
-                if (fieldMulai.getText().trim().isEmpty()) {
-                    errors.add("• Waktu mulai tidak boleh kosong");
-                }
-                
-                // VALIDASI 8: Waktu selesai harus diisi
-                if (fieldSelesai.getText().trim().isEmpty()) {
-                    errors.add("• Waktu selesai tidak boleh kosong");
-                }
-                
-                // VALIDASI 9: Kapasitas harus diisi dan berupa angka
-                String kapasitasText = fieldKapasitas.getText().trim();
-                if (kapasitasText.isEmpty()) {
-                    errors.add("• Kapasitas tidak boleh kosong");
-                } else {
-                    try {
-                        int kapasitas = Integer.parseInt(kapasitasText);
-                        if (kapasitas <= 0) {
-                            errors.add("• Kapasitas harus lebih dari 0");
-                        }
-                    } catch (NumberFormatException ex) {
-                        errors.add("• Kapasitas harus berupa angka");
-                    }
-                }
-                
-                // Tampilkan semua error sekaligus jika ada
                 if (!errors.isEmpty()) {
-                    String errorMessage = "Mohon perbaiki kesalahan berikut:\n\n" +
-                        String.join("\n", errors) +
-                        "\n\nSilakan lengkapi semua field yang wajib diisi.";
-                    
-                    JOptionPane.showMessageDialog(this, 
-                        errorMessage, 
-                        "Data Reservasi Tidak Lengkap", 
-                        JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(this, String.join("\n", errors), "Data Tidak Lengkap", JOptionPane.ERROR_MESSAGE);
                     return;
                 }
-                
-                // VALIDASI TAMBAHAN: Waktu selesai harus setelah waktu mulai
-                // (Anda bisa menambahkan logika perbandingan waktu di sini)
-                
-                // Jika semua validasi passed, tampilkan pesan sukses
-                JOptionPane.showMessageDialog(this, 
-                    "Reservasi berhasil dibuat dan menunggu persetujuan.", 
-                    "Sukses", 
-                    JOptionPane.INFORMATION_MESSAGE);
-                mainApp.showPanel("HOME_MHS"); 
+
+                // ==========================================
+                // BAGIAN PENTING: PROSES SIMPAN KE DATA MANAGER
+                // ==========================================
+               try {
+                    // 1. Ambil Kode Ruangan
+                    String selectedRuang = (String) comboKelas.getSelectedItem();
+                    String kodeRuang = selectedRuang.split(" ")[0]; 
+                    
+                    // 2. Gabungkan Keperluan
+                    String keperluanFull = fieldJudul.getText() + " (" + areaDeskripsi.getText() + ")";
+                    
+                    // 3. DEBUG: Cek NIM
+                    if(currentUserNIM == null || currentUserNIM.isEmpty()) {
+                        currentUserNIM = "UNKNOWN"; // Fallback biar gak error
+                    }
+
+                    // 4. BUAT OBJECT RESERVASI (GUNAKAN 8 PARAMETER)
+                    // Perhatikan: fieldMulai dan fieldSelesai dipisah!
+                    Reservasi rBaru = new Reservasi(
+                        "RES-" + System.currentTimeMillis(), // 1. ID
+                        currentUserNIM,                      // 2. NIM
+                        kodeRuang,                           // 3. Ruang
+                        fieldTanggal.getText(),              // 4. Tanggal
+                        fieldMulai.getText(),                // 5. Jam Mulai
+                        fieldSelesai.getText(),              // 6. Jam Selesai
+                        keperluanFull,                       // 7. Keperluan
+                        "Menunggu"                           // 8. Status
+                    );
+                    
+                    // 5. SIMPAN KE DATABASE
+                    mainApp.getDataManager().addReservasi(rBaru);
+                    
+                    // 6. Sukses
+                    JOptionPane.showMessageDialog(this, "Reservasi berhasil diajukan!\nMenunggu persetujuan Admin.", "Sukses", JOptionPane.INFORMATION_MESSAGE);
+                    
+                    resetForm();
+                    mainApp.showPanel("HOME_MHS"); 
+                    
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                    JOptionPane.showMessageDialog(this, "Gagal menyimpan: " + ex.getMessage());
+                }
             });
+        }
+        
+        private void resetForm() {
+            fieldJudul.setText("");
+            areaDeskripsi.setText("");
+            fieldTanggal.setText("");
+            fieldMulai.setText("");
+            fieldSelesai.setText("");
+            checkSetuju.setSelected(false);
         }
         
         public void setJenisReservasi(String jenis) {
@@ -243,7 +244,7 @@ public class PanelReservasiMahasiswa extends JPanel {
             
             comboKelas.removeAllItems();
             List<Ruang> ruanganTersedia = mainApp.getDataManager().getAllRuangan().stream()
-                .filter(r -> r.getJenis().equals(jenis) && r.getStatus().equals("Aktif"))
+                .filter(r -> r.getJenis().equalsIgnoreCase(jenis) && r.getStatus().equalsIgnoreCase("Aktif"))
                 .collect(Collectors.toList());
                 
             for (Ruang r : ruanganTersedia) {
